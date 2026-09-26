@@ -51,3 +51,6 @@ class ProxmoxService:
                     running_containers += 1
 
         return running_containers
+
+    def get_network_information(self, node: str):
+        return self.proxmox.nodes(node).network.get()
