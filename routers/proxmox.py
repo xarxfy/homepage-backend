@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from services.proxmox import ProxmoxService
+from services.proxmox import ProxmoxService, VMAction
 
 
 router = APIRouter(
@@ -19,6 +19,7 @@ def get_nodes():
 def get_node(node: str):
     return proxmox.get_node(node)
 
+#VM Methods
 @router.get("/nodes/{node}/vms")
 def get_vms(node: str):
     return proxmox.get_vms(node)
@@ -28,6 +29,14 @@ def get_running_vms(node: str):
     return{
 	"vms_running": proxmox.get_running_vms()
     }
+    
+@router.post("/nodes/{node}/vms/{vmid}/{action}")
+def vm_action(node: str, vmid: int, action: VMAction):
+    upid = proxmox.vm_actions(node, vmid, action)
+    return {"vmid": vmid, "action": action.value, "tast": upid}
+
+
+#Container Methods    
 @router.get("/nodes/{node}/containers")
 def get_containers(node: str):
     return proxmox.get_containers(node)
@@ -37,11 +46,13 @@ def get_running_containers(node: str):
     return{
 	"containers_running": proxmox.get_running_containers()
     }
-
+    
+@router.post("/nodes/{node}/containers/{vmid}/{action}")
+def container_action(node: str, vmid: int, action: VMAction):
+    upid = proxmox.container_actions(node, vmid, action)
+    return {"vmid": vmid, "action": action.value, "tast": upid}
+    
+#Network Methods
 @router.get("/nodes/{node}/network")
 def get_network_information(node: str):
     return proxmox.get_network_information(node)
-
-@router.get("/nodes/{node}/network/speed")
-def get_network_speed(node: str):
-    return proxmox.get_network_speed(node)

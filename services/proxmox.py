@@ -2,9 +2,14 @@ import os
 
 from dotenv import load_dotenv
 from proxmoxer import ProxmoxAPI
-
-
+from enum import Enum
 load_dotenv()
+
+class VMAction(str, Enum):
+    start = "start"
+    shutdown = "shutdown"
+    stop = "stop"
+    reboot = "reboot"
 
 class ProxmoxService:
     def __init__(self):
@@ -22,6 +27,7 @@ class ProxmoxService:
     def get_node(self, node: str):
         return self.proxmox.nodes(node).status.get()
 
+    #VM Methods
     def get_vms(self, node: str):
         return self.proxmox.nodes(node).qemu.get()
 
@@ -37,6 +43,11 @@ class ProxmoxService:
 
         return running_vms
 
+    def vm_actions(self, node: str, vmid: int, action: VMAction):
+            status = self.proxmox.nodes(node).qemu(vmid).status
+            return getattr(status, action.value).post()
+
+    #Container Methods
     def get_containers(self, node: str):
         return self.proxmox.nodes(node).lxc.get()
 
@@ -51,24 +62,12 @@ class ProxmoxService:
                     running_containers += 1
 
         return running_containers
+    
+    def container_actions(self, node: str, vmid: int, action: VMAction):
+                status = self.proxmox.nodes(node).lxc(vmid).status
+                return getattr(status, action.value).post()
 
     def get_network_information(self, node: str):
         return self.proxmox.nodes(node).network.get()
 
-    def get_network_speed(self, node: str):
-        rrd = self.proxmox.nodes(node).rrddata.get(
-            timeframe="hour",
-            cf="AVERAGE"
-        )
-
-        if len(rrd) < 2:
-            return None
-
-        prev = rrd[-2]
-        curr = rrd[-1]
-
-        return{
-            "time": curr["time"],
-            "netin": curr.get("netin", 0),
-            "netout": curr.get("netout", 0),
-        }
+    
