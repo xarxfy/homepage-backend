@@ -54,3 +54,21 @@ class ProxmoxService:
 
     def get_network_information(self, node: str):
         return self.proxmox.nodes(node).network.get()
+
+    def get_network_speed(self, node: str):
+        rrd = self.proxmox.nodes(node).rrddata.get(
+            timeframe="hour",
+            cf="AVERAGE"
+        )
+
+        if len(rrd) < 2:
+            return None
+
+        prev = rrd[-2]
+        curr = rrd[-1]
+
+        return{
+            "time": curr["time"],
+            "netin": curr.get("netin", 0),
+            "netout": curr.get("netout", 0),
+        }

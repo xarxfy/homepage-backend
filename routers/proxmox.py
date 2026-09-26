@@ -41,3 +41,7 @@ def get_running_containers(node: str):
 @router.get("/nodes/{node}/network")
 def get_network_information(node: str):
     return proxmox.get_network_information(node)
+
+@router.get("/nodes/{node}/network/speed")
+def get_network_speed(node: str):
+    return proxmox.get_network_speed(node)
