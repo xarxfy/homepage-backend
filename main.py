@@ -1,6 +1,7 @@
 from fastapi import FastAPI, APIRouter
 
 from routers.proxmox import router as proxmox_router
+from routers.tools import router as tools_router
 
 app = FastAPI()
 
@@ -13,5 +14,5 @@ def health():
 	return{"status": "ok"}
 
 api_router.include_router(proxmox_router)
-
+api_router.include_router(tools_router)
 app.include_router(api_router)

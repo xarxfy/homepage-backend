@@ -56,3 +56,7 @@ def container_action(node: str, vmid: int, action: VMAction):
 @router.get("/nodes/{node}/network")
 def get_network_information(node: str):
     return proxmox.get_network_information(node)
+
+@router.get("/nodes/{node}/network/dns")
+def get_dns_information(node: str):
+    return proxmox.get_dns_information(node)

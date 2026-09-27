@@ -67,7 +67,10 @@ class ProxmoxService:
                 status = self.proxmox.nodes(node).lxc(vmid).status
                 return getattr(status, action.value).post()
 
+    #Network Methods
     def get_network_information(self, node: str):
         return self.proxmox.nodes(node).network.get()
 
+    def get_dns_information(self, node: str):
+        return self.proxmox.nodes(node).dns.get()
     
