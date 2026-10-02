@@ -89,3 +89,6 @@ class ProxmoxService:
     
     def delete_api_token(self, userid: str, tokenid: str):
         self.proxmox.access.users(userid).token(tokenid).delete()
+        
+    def create_api_token(self, userid: str, tokenid: str, comment: str, privsep: int):
+        token = self.proxmox.access.users("")
