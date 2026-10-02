@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from services.proxmox import ProxmoxService, VMAction
 
@@ -60,3 +60,19 @@ def get_network_information(node: str):
 @router.get("/nodes/{node}/network/dns")
 def get_dns_information(node: str):
     return proxmox.get_dns_information(node)
+
+#Access Methods
+@router.get("/access/users")
+def get_users_information():
+    return proxmox.get_users_information()
+
+@router.get("/access/api-tokens")
+def get_api_tokens():
+    return proxmox.get_api_tokens()
+
+@router.post("/access/api-token/delete")
+def delete_api_token(
+    userid: str = Query(..., min_length=1, max_length=253),
+    tokenid: str = Query(..., min_length=1, max_length=253)
+):
+    return proxmox.delete_api_token(userid, tokenid)

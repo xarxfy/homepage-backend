@@ -74,3 +74,18 @@ class ProxmoxService:
     def get_dns_information(self, node: str):
         return self.proxmox.nodes(node).dns.get()
     
+    #Authentication Methods
+    def get_users_information(self):
+        return self.proxmox.access.users.get()
+    
+    def get_api_tokens(self):
+        tokens = []
+        for user in self.proxmox.access.users.get():
+            userid = user["userid"]
+            for t in self.proxmox.access.users(userid).token.get():
+                details = self.proxmox.access.users(userid).token(t["tokenid"]).get()
+                tokens.append({"userid": userid, "tokenid": t["tokenid"], **details})
+        return tokens
+    
+    def delete_api_token(self, userid: str, tokenid: str):
+        self.proxmox.access.users(userid).token(tokenid).delete()
