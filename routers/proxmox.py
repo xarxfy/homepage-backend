@@ -80,8 +80,8 @@ def delete_api_token(
 @router.post("/access/api-token/create")
 def create_api_token(
     userid: str = Query(..., min_length=1, max_length=253),
-    tokenid: str = Query(..., min_length=1, max_length=253),
-    comment: str = Query(..., min_length=1, max_length=253),
-    privsep: int = Query(..., ge=0, le=1),
+    tokenid: str = Query(..., min_length=1, max_length=64, pattern=r"^[A-Za-z][A-Za-z0-9._-]*$"),
+    comment: str = Query("", max_length=253),
+    privsep: int = Query(1, ge=0, le=1),
 ):
-    token = proxmox.create_api_token(userid, tokenid, comment, privsep)
+    return proxmox.create_api_token(userid, tokenid, comment, privsep)
